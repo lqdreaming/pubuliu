@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+	<title>瀑布流</title>
+</head>
+<style type="text/css">
+*{margin:0;padding:0;}	
+#main{
+	position:relative;  
+	margin:0 auto; 
+}
+.box{
+	padding:15px 0 0 15px;  
+	float:left;  
+}
+.box div{
+	border:1px solid #ccc;  
+	padding:10px; 
+	box-shadow:0 0 6px #ccc; 
+	border-radius:5px; 
+}
+.box div img{
+	width:170px; 
+} 
+</style>
+<script>
+window.onload=function(){
+	WaterFall('main','box');
+	//假设服务器获取的数据
+	var dateInt={
+		'date':[{'src':'./css_image/21.jpg'},{'src':'./css_image/22.jpg'},{'src':'./css_image/23.jpg'},{'src':'./css_image/24.jpg'},{'src':'./css_image/25.jpg'},{'src':'./css_image/26.jpg'},{'src':'./css_image/27.jpg'},{'src':'./css_image/28.jpg'},{'src':'./css_image/29.jpg'},{'src':'./css_image/30.jpg'},{'src':'./css_image/31.jpg'},{'src':'./css_image/32.jpg'},{'src':'./css_image/33.jpg'},{'src':'./css_image/34.jpg'},{'src':'./css_image/35.jpg'},{'src':'./css_image/36.jpg'},{'src':'./css_image/37.jpg'},{'src':'./css_image/38.jpg'},{'src':'./css_image/39.jpg'},{'src':'./css_image/40.jpg'},{'src':'./css_image/41.jpg'},{'src':'./css_image/42.jpg'},{'src':'./css_image/43.jpg'},{'src':'./css_image/44.jpg'},{'src':'./css_image/45.jpg'},{'src':'./css_image/46.jpg'},{'src':'./css_image/47.jpg'},{'src':'./css_image/48.jpg'},{'src':'./css_image/49.jpg'},{'src':'./css_image/50.jpg'}]
+	};
+		 window.onscroll=function(){
+		 onScroll(dateInt);
+		 }//加载函数
+}
+function onScroll(dateInt){
+	console.log(dateInt.date);
+	if (scrollCheck()){//判断滚动条滑到什么时候什么时候开始加载-返回布尔值
+		var main=document.getElementById('main');//父级对象
+		for (var i = 0; i < dateInt.date.length; i++) {//遍历服务器端的数据
+			odiv=document.createElement('div');//创建一个节点div
+			odiv.className='box';//创建元素的类名
+			main.appendChild(odiv);//添加子节点
+			idiv=document.createElement('div');
+			odiv.appendChild(idiv);
+			oimg=document.createElement('img');
+			oimg.src=dateInt.date[i].src;
+			idiv.appendChild(oimg);
+		}
+	WaterFall('main','box');
+	}	
+}
+
+function scrollCheck(){
+	var main=document.getElementById('main');//父级对象
+	var abox=getClass(main,'box');//获取存储块框box的数组abox
+  	var lastH=abox[abox.length-1].offsetTop+Math.floor(abox[abox.length-1].offsetHeight/2);//创建【触发添加块框函数waterfall()】的高度：最后一个块框的距离网页顶部+自身高的一半(实现未滚到底就开始加载)
+    var scrollTop=document.documentElement.scrollTop||document.body.scrollTop;//注意解决兼容性
+    var documentH=document.documentElement.clientHeight;//页面高度
+    return (lastH<scrollTop+documentH)?true:false;//到达指定高度后 返回true，触发waterfall()函数
+	
+}
+
+function WaterFall(main,box){
+    var main=document.getElementById('main');//父级对象
+ 	var abox=getClass(main,'box');//获取存储块框box的数组abox
+ 	var WinWidth=document.documentElement.clientWidth;
+ 	var sinWidth=abox[0].offsetWidth;
+ 	var num=Math.floor(WinWidth/sinWidth);
+ 	main.style.cssText='width:'+sinWidth*num+'px;margin:0 auto;';//设置父级居中样式：定宽+自动水平外边距
+
+ 	var boxH=[];//定义一个放box高度的数组
+ 	for (var i = 0; i < abox.length; i++) {
+ 		iboxH=abox[i].offsetHeight;
+ 		if (i<num) {
+ 			boxH[i]=iboxH;
+ 		}else{
+ 		var minH=Math.min.apply(null,boxH);//数组pinHArr中的最小值minH
+ 		minIndex=getIndex(minH,boxH);//数组最小值minH的索引
+ 		//下一张图片的位置定位
+ 		abox[i].style.position='absolute';
+ 		abox[i].style.top=minH+'px';
+ 		abox[i].style.left=abox[minIndex].offsetLeft+'px';
+ 		boxH[minIndex]+=abox[i].offsetHeight;//更新数组后前一个最小索引此时的高度
+ 		}
+ 	}
+}
+
+function getIndex(minH,boxH){
+	var index;
+	for (var i = 0; i < boxH.length; i++) {
+		if (minH==boxH[i]) {
+			index=i;
+		}
+}
+	return index;
+}
+//根据父元素获取该类名所有元素
+function getClass(par,clsName){
+	var cls=new Array();
+	 oPar=par.getElementsByTagName('*');
+	for (var i = 0; i < oPar.length; i++) {
+		if (oPar[i].className==clsName) {
+			cls.push(oPar[i]);
+	}
+}
+	return cls;
+}
+</script>
+<body>
+<div id="main">
+	<div class="box">
+		<div>
+			<img src="./css_image/0.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/1.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/2.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/3.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/4.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/5.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/6.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/7.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/8.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/9.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/10.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/11.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/12.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/13.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/14.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/15.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/16.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/17.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/18.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/19.jpg">
+		</div>
+	</div>
+	<div class="box">
+		<div>
+			<img src="./css_image/20.jpg">
+		</div>
+	</div>
+</div>
+</body>
+</html>
